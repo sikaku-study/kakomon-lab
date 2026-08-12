@@ -1,8 +1,6 @@
 // 公害防止管理者(水質関係第4種) 過去問データ
 // ID命名規則: mizu-r{年度}-{科目}-{問番号}
 
-import { useState } from "react";
-
 const R7_SUBJECTS = [
   {
     key: "souron",

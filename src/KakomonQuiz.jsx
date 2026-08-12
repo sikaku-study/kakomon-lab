@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MIZU4_YEARS } from "./data/mizu4.js";
 
 const YEARS = MIZU4_YEARS;

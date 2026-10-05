@@ -17,8 +17,8 @@ const QUALIFICATIONS = [
   {
     key: "rei2",
     label: "冷凍機械責任者　第2種",
-    description: "準備中",
-    available: false,
+    description: "第2種冷凍機械責任者試験の過去問（令和6年度〜・順次追加）",
+    available: true,
   },
   {
     key: "taiki4",

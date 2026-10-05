@@ -15,6 +15,12 @@ const QUALIFICATIONS = [
     available: true,
   },
   {
+    key: "rei2",
+    label: "冷凍機械責任者　第2種",
+    description: "準備中",
+    available: false,
+  },
+  {
     key: "taiki4",
     label: "公害防止管理者　大気4種",
     description: "準備中",

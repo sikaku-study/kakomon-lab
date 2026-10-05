@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { MIZU4_YEARS } from "./data/mizu4.js";
-
-const YEARS = MIZU4_YEARS;
 
 const INK = "#26323d";
 const INK_TINT = "#eef1f3";
@@ -232,7 +229,7 @@ function makeInitialAnswers(subjects, subjectIdx) {
   }));
 }
 
-function QuizScreen({ yearLabel, subjects, onBackToYears }) {
+function QuizScreen({ title, yearLabel, subjects, onBackToYears }) {
   const [subjectIdx, setSubjectIdx] = useState(0);
   const [index, setIndex] = useState(0);
   const [answersBySubject, setAnswersBySubject] = useState(
@@ -327,7 +324,7 @@ function QuizScreen({ yearLabel, subjects, onBackToYears }) {
               fontFamily: "'Hiragino Sans', sans-serif",
             }}
           >
-            公害防止管理者　水質4種　{yearLabel}
+            {title}　{yearLabel}
           </div>
           <button
             onClick={onBackToYears}
@@ -687,7 +684,7 @@ function QuizScreen({ yearLabel, subjects, onBackToYears }) {
   );
 }
 
-function YearSelect({ onSelectYear }) {
+function YearSelect({ title, years, subjectSummary, onSelectYear }) {
   return (
     <div
       style={{
@@ -718,7 +715,7 @@ function YearSelect({ onSelectYear }) {
               fontFamily: "'Hiragino Sans', sans-serif",
             }}
           >
-            公害防止管理者　水質4種
+            {title}
           </div>
           <a
             href="#"
@@ -745,7 +742,7 @@ function YearSelect({ onSelectYear }) {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {YEARS.map((y) => {
+          {years.map((y) => {
             const available = !!y.subjects;
             return (
               <button
@@ -769,7 +766,7 @@ function YearSelect({ onSelectYear }) {
               >
                 <span style={{ fontWeight: 700 }}>{y.label}</span>
                 <span style={{ fontSize: 12, color: available ? "#6b6355" : "#c9c3b4" }}>
-                  {available ? "公害総論・水質概論・汚水処理特論" : "準備中"}
+                  {available ? subjectSummary : "準備中"}
                 </span>
               </button>
             );
@@ -780,16 +777,28 @@ function YearSelect({ onSelectYear }) {
   );
 }
 
-export default function KakomonQuiz() {
+// 種目ごとのデータは props で受け取る。
+//   title: 画面上部の見出し(例: "公害防止管理者　水質4種")
+//   years: [{ key, label, subjects }]
+//   subjectSummary: 年度選択ボタンに表示する科目名の要約
+export default function KakomonQuiz({ title, years, subjectSummary }) {
   const [selectedYear, setSelectedYear] = useState(null);
 
   if (!selectedYear) {
-    return <YearSelect onSelectYear={setSelectedYear} />;
+    return (
+      <YearSelect
+        title={title}
+        years={years}
+        subjectSummary={subjectSummary}
+        onSelectYear={setSelectedYear}
+      />
+    );
   }
 
   return (
     <QuizScreen
       key={selectedYear.key}
+      title={title}
       yearLabel={selectedYear.label}
       subjects={selectedYear.subjects}
       onBackToYears={() => setSelectedYear(null)}

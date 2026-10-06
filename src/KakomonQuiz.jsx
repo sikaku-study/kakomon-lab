@@ -562,6 +562,40 @@ function QuizScreen({ title, yearLabel, subjects, onBackToYears }) {
                   {q.note}
                 </div>
               )}
+              {current.answered && q.explanation && (
+                <div
+                  style={{
+                    marginTop: 14,
+                    padding: "10px 14px",
+                    background: "#fff",
+                    borderLeft: `3px solid ${INK}`,
+                    fontFamily: "'Hiragino Sans', sans-serif",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 11,
+                      letterSpacing: "0.2em",
+                      color: "#6b6355",
+                      fontWeight: 700,
+                      marginBottom: 4,
+                    }}
+                  >
+                    解説
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      lineHeight: 1.8,
+                      color: INK,
+                      fontWeight: 400,
+                      whiteSpace: "pre-wrap",
+                    }}
+                  >
+                    {q.explanation}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div

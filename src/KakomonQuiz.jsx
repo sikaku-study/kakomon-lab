@@ -718,7 +718,7 @@ function QuizScreen({ title, yearLabel, subjects, onBackToYears }) {
   );
 }
 
-function YearSelect({ title, years, subjectSummary, onSelectYear }) {
+function YearSelect({ title, years, onSelectYear }) {
   return (
     <div
       style={{
@@ -800,7 +800,7 @@ function YearSelect({ title, years, subjectSummary, onSelectYear }) {
               >
                 <span style={{ fontWeight: 700 }}>{y.label}</span>
                 <span style={{ fontSize: 12, color: available ? "#6b6355" : "#c9c3b4" }}>
-                  {available ? subjectSummary : "準備中"}
+                  {available ? y.subjects.map((sj) => sj.label).join("・") : "準備中"}
                 </span>
               </button>
             );
@@ -814,8 +814,7 @@ function YearSelect({ title, years, subjectSummary, onSelectYear }) {
 // 種目ごとのデータは props で受け取る。
 //   title: 画面上部の見出し(例: "公害防止管理者　水質4種")
 //   years: [{ key, label, subjects }]
-//   subjectSummary: 年度選択ボタンに表示する科目名の要約
-export default function KakomonQuiz({ title, years, subjectSummary }) {
+export default function KakomonQuiz({ title, years }) {
   const [selectedYear, setSelectedYear] = useState(null);
 
   if (!selectedYear) {
@@ -823,7 +822,6 @@ export default function KakomonQuiz({ title, years, subjectSummary }) {
       <YearSelect
         title={title}
         years={years}
-        subjectSummary={subjectSummary}
         onSelectYear={setSelectedYear}
       />
     );

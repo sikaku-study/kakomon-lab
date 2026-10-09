@@ -12,7 +12,6 @@ const mizu4Page = () => (
   <KakomonQuiz
     title="公害防止管理者　水質4種"
     years={MIZU4_YEARS}
-    subjectSummary="公害総論・水質概論・汚水処理特論"
   />
 );
 
@@ -20,7 +19,6 @@ const rei2Page = () => (
   <KakomonQuiz
     title="冷凍機械責任者　第2種"
     years={REI2_YEARS}
-    subjectSummary="法令・保安管理技術・学識"
   />
 );
 

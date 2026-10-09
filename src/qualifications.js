@@ -12,19 +12,16 @@ export const QUALIFICATIONS = [
   {
     key: "mizu4", // URLハッシュ(#mizu4)に使う識別子
     title: "公害防止管理者　水質4種", // 一覧・各画面の見出し
-    exam: "水質関係第4種", // 一覧の説明文「〇〇の過去問」に使う名前
     years: MIZU4_YEARS,
   },
   {
     key: "rei2",
     title: "冷凍機械責任者　第2種",
-    exam: "第2種冷凍機械責任者試験",
     years: REI2_YEARS,
   },
   {
     key: "taiki4",
     title: "公害防止管理者　大気4種",
-    exam: "大気関係第4種",
     years: [],
   },
 ];
@@ -46,7 +43,6 @@ export function isQualificationAvailable(q) {
 
 // トップページ用の要約。年度は収録済みのものだけを対象にする。
 //   yearText: 連続していれば「最古〜最新」、飛びがあれば全年度を列挙
-//   subjectText: 収録済みの年度に出てくる科目名(重複なし)
 export function summarize(q) {
   const years = q.years.filter(isYearAvailable);
   if (years.length === 0) return { available: false };
@@ -64,11 +60,5 @@ export function summarize(q) {
   else if (contiguous) yearText = `${sorted[0].label}〜${sorted[sorted.length - 1].label}`;
   else yearText = sorted.map((y) => y.label).join("・");
 
-  const labels = [];
-  for (const y of years) {
-    for (const s of y.subjects) {
-      if (!labels.includes(s.label)) labels.push(s.label);
-    }
-  }
-  return { available: true, yearText, subjectText: labels.join("・") };
+  return { available: true, yearText };
 }

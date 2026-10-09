@@ -69,14 +69,7 @@ export default function TopPage() {
                     marginTop: 4,
                   }}
                 >
-                  {available
-                    ? `${q.exam}の過去問（${info.yearText}）`
-                    : "準備中"}
-                  {available && (
-                    <div style={{ marginTop: 2, color: "#8a8272" }}>
-                      {info.subjectText}
-                    </div>
-                  )}
+                  {available ? info.yearText : "準備中"}
                 </div>
               </div>
             );

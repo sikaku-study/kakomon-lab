@@ -2312,7 +2312,7 @@ const R4_SUBJECTS = [
         id: "mizu-r04-osui-08",
         question:
           "逆浸透膜を用いる多段式の膜分離プロセス（二段）を用いたときのフローとして、適切なものはどれか。ただし、図中の※は膜モジュールの高圧側を、＊は膜透過側を表す。",
-        image: "/images/r04-osui-08.png",
+        image: "/images/mizu-r04-osui-08.png",
         choices: ["図(1)", "図(2)", "図(3)", "図(4)", "図(5)"],
         answer: 0,
       },
@@ -3699,7 +3699,7 @@ const R2_SUBJECTS = [
         id: "mizu-r02-osui-04",
         question:
           "5種類の排水A～Eについて、それぞれの水中の固形物の粒度分布を測定し、沈降速度分布曲線を得た。表面積100m2の横流式沈殿池に40m3/hの水量の排水を流入させて固形物の沈殿除去をするとき、粒子の分離効率が最も高くなるのは、どの排水か。ただし、排水は流入部から均一に流入し、池内に乱れや短絡がなく、水の流れは並行であり、かつ粒子は沈降の過程で沈降速度が変わることはないものとする。",
-        image: "/images/r02-osui-04.png",
+        image: "/images/mizu-r02-osui-04.png",
         choices: [
           "A",
           "B",
@@ -4458,7 +4458,7 @@ const R1_SUBJECTS = [
         id: "mizu-r01-osui-05",
         question:
           "各種金属イオンの溶解度とpHの関係を示す図から読み取れる金属イオンを含む排水の処理に関する記述として、誤っているものはどれか。",
-        image: "/images/r01-osui-05.png",
+        image: "/images/mizu-r01-osui-05.png",
         choices: [
           "2価の鉄は、pH11付近でほぼ完全に除去される。",
           "3価の鉄は、pH4付近でほぼ完全に除去される。",
@@ -4502,7 +4502,7 @@ const R1_SUBJECTS = [
         id: "mizu-r01-osui-08",
         question:
           "膜分離法における全量ろ過式プロセス及びクロスフロー式プロセスの図として、最も適切なものの組合せはどれか。",
-        image: "/images/r01-osui-08.png",
+        image: "/images/mizu-r01-osui-08.png",
         choices: [
           "ア・イ",
           "ア・ウ",

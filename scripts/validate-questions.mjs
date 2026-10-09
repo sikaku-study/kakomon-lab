@@ -5,8 +5,8 @@
 // このセッション中に手作業で何度も繰り返した確認を自動化したもの。
 // 新しい年度・科目・資格種別を追加したら、コミット前に必ず実行すること。
 
-import { readFileSync, readdirSync } from "fs";
-import { fileURLToPath } from "url";
+import { readFileSync, readdirSync, existsSync } from "fs";
+import { fileURLToPath, pathToFileURL } from "url";
 import path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -111,6 +111,64 @@ for (const file of dataFiles) {
     console.log(`[${file}] 問題なし`);
   }
   totalIssues += fileIssues;
+}
+
+// ---- 構造チェック(src/qualifications.js を読み込んで種目・年度・問題を検査) ----
+// 年度や種目を追加したときの入れ忘れ・書き間違いを拾う。
+{
+  const publicDir = path.join(__dirname, "..", "public");
+  const mod = await import(
+    pathToFileURL(path.join(__dirname, "..", "src", "qualifications.js")).href
+  );
+  const seenKeys = new Set();
+  let structIssues = 0;
+  let noExplanation = 0;
+  const issue = (msg) => {
+    console.log(`[構造] ${msg}`);
+    structIssues++;
+  };
+
+  for (const q of mod.QUALIFICATIONS) {
+    if (seenKeys.has(q.key)) issue(`種目キー重複: ${q.key}`);
+    seenKeys.add(q.key);
+
+    const yearKeys = new Set();
+    for (const y of q.years) {
+      const where = `${q.key}/${y.key}`;
+      if (yearKeys.has(y.key)) issue(`年度キー重複: ${where}`);
+      yearKeys.add(y.key);
+      if (y.subjects === undefined) continue; // 準備中の年度
+      if (!Array.isArray(y.subjects) || y.subjects.length === 0) {
+        issue(`${where}: subjects が空`);
+        continue;
+      }
+      const subjectKeys = new Set();
+      for (const sj of y.subjects) {
+        if (subjectKeys.has(sj.key)) issue(`${where}: 科目キー重複 ${sj.key}`);
+        subjectKeys.add(sj.key);
+        if (!sj.questions || sj.questions.length === 0) {
+          issue(`${where}/${sj.key}: 問題が0件`);
+          continue;
+        }
+        for (const item of sj.questions) {
+          const n = item.choices.length;
+          const answers = Array.isArray(item.answer) ? item.answer : [item.answer];
+          if (!answers.every((a) => Number.isInteger(a) && a >= 0 && a < n)) {
+            issue(`${item.id}: answer が選択肢の範囲外 (answer=${JSON.stringify(item.answer)}, 選択肢${n}個)`);
+          }
+          if (item.image && !existsSync(path.join(publicDir, item.image))) {
+            issue(`${item.id}: 画像が見つからない public${item.image}`);
+          }
+          if (!item.explanation) noExplanation++;
+        }
+      }
+    }
+  }
+  if (structIssues === 0) console.log("[構造] 問題なし");
+  if (noExplanation > 0) {
+    console.log(`[構造] (参考) 解説のない問題: ${noExplanation}問`);
+  }
+  totalIssues += structIssues;
 }
 
 console.log(`\n合計 ${totalIssues} 件の問題が見つかりました。`);

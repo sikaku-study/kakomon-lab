@@ -1,33 +1,11 @@
 import React, { useEffect, useState } from "react";
 import TopPage from "./TopPage.jsx";
 import KakomonQuiz from "./KakomonQuiz.jsx";
-import { MIZU4_YEARS } from "./data/mizu4.js";
-import { REI2_YEARS } from "./data/rei2.js";
+import { QUALIFICATIONS, isQualificationAvailable } from "./qualifications.js";
 
 // シンプルなハッシュルーティング。ライブラリなしで #mizu4 のような
-// URLハッシュに応じてページを切り替える。種目が増えたら
-// ROUTES にキーを追加していく。
-// 種目ごとに KakomonQuiz へタイトル・年度データ・科目要約を渡す。
-const mizu4Page = () => (
-  <KakomonQuiz
-    title="公害防止管理者　水質4種"
-    years={MIZU4_YEARS}
-  />
-);
-
-const rei2Page = () => (
-  <KakomonQuiz
-    title="冷凍機械責任者　第2種"
-    years={REI2_YEARS}
-  />
-);
-
-const ROUTES = {
-  mizu4: mizu4Page,
-  rei2: rei2Page,
-  // taiki4: ..., // 今後追加
-};
-
+// URLハッシュに応じてページを切り替える。
+// 種目の一覧は src/qualifications.js にあり、種目を足してもここは変更不要。
 function getRouteKey() {
   return window.location.hash.replace(/^#/, "");
 }
@@ -41,6 +19,12 @@ export default function App() {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
-  const Page = ROUTES[routeKey];
-  return Page ? <Page /> : <TopPage />;
+  const qual = QUALIFICATIONS.find(
+    (q) => q.key === routeKey && isQualificationAvailable(q)
+  );
+  return qual ? (
+    <KakomonQuiz key={qual.key} title={qual.title} years={qual.years} />
+  ) : (
+    <TopPage />
+  );
 }

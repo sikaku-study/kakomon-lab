@@ -1,32 +1,10 @@
 import React from "react";
+import { QUALIFICATIONS, summarize } from "./qualifications.js";
 
 const INK = "#26323d";
 const PAPER = "#f7f6f1";
 const RULE = "#d8d3c4";
 const RED = "#b23a2f";
-
-// 今後、種目・資格が増えたらここに追加していく。
-// key はハッシュルーティングに使う識別子(#mizu4 など)。
-const QUALIFICATIONS = [
-  {
-    key: "mizu4",
-    label: "公害防止管理者　水質4種",
-    description: "水質関係第4種の過去問（令和元年度〜令和7年度）",
-    available: true,
-  },
-  {
-    key: "rei2",
-    label: "冷凍機械責任者　第2種",
-    description: "第2種冷凍機械責任者試験の過去問（令和6年度〜・順次追加）",
-    available: true,
-  },
-  {
-    key: "taiki4",
-    label: "公害防止管理者　大気4種",
-    description: "準備中",
-    available: false,
-  },
-];
 
 export default function TopPage() {
   return (
@@ -68,19 +46,21 @@ export default function TopPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {QUALIFICATIONS.map((q) => {
+            const info = summarize(q);
+            const available = info.available;
             const inner = (
               <div
                 style={{
                   border: `1px solid ${RULE}`,
                   borderRadius: 4,
                   padding: "18px 20px",
-                  background: q.available ? "#fff" : "#f1efe8",
-                  opacity: q.available ? 1 : 0.6,
-                  cursor: q.available ? "pointer" : "default",
+                  background: available ? "#fff" : "#f1efe8",
+                  opacity: available ? 1 : 0.6,
+                  cursor: available ? "pointer" : "default",
                   transition: "border-color 0.15s",
                 }}
               >
-                <div style={{ fontSize: 16, fontWeight: 700 }}>{q.label}</div>
+                <div style={{ fontSize: 16, fontWeight: 700 }}>{q.title}</div>
                 <div
                   style={{
                     fontSize: 12,
@@ -89,12 +69,19 @@ export default function TopPage() {
                     marginTop: 4,
                   }}
                 >
-                  {q.description}
+                  {available
+                    ? `${q.exam}の過去問（${info.yearText}）`
+                    : "準備中"}
+                  {available && (
+                    <div style={{ marginTop: 2, color: "#8a8272" }}>
+                      {info.subjectText}　全{info.count}問
+                    </div>
+                  )}
                 </div>
               </div>
             );
 
-            return q.available ? (
+            return available ? (
               <a
                 key={q.key}
                 href={`#${q.key}`}

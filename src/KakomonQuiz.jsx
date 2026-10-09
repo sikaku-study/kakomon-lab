@@ -777,7 +777,7 @@ function YearSelect({ title, years, onSelectYear }) {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {years.map((y) => {
-            const available = !!y.subjects;
+            const available = Array.isArray(y.subjects) && y.subjects.length > 0;
             return (
               <button
                 key={y.key}
@@ -800,7 +800,12 @@ function YearSelect({ title, years, onSelectYear }) {
               >
                 <span style={{ fontWeight: 700 }}>{y.label}</span>
                 <span style={{ fontSize: 12, color: available ? "#6b6355" : "#c9c3b4" }}>
-                  {available ? y.subjects.map((sj) => sj.label).join("・") : "準備中"}
+                  {available
+                    ? `${y.subjects.map((sj) => sj.label).join("・")}　${y.subjects.reduce(
+                        (n, sj) => n + sj.questions.length,
+                        0
+                      )}問`
+                    : "準備中"}
                 </span>
               </button>
             );

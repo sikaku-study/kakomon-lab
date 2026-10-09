@@ -74,7 +74,7 @@ export default function TopPage() {
                     : "準備中"}
                   {available && (
                     <div style={{ marginTop: 2, color: "#8a8272" }}>
-                      {info.subjectText}　全{info.count}問
+                      {info.subjectText}
                     </div>
                   )}
                 </div>

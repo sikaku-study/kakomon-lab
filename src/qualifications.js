@@ -44,14 +44,9 @@ export function isQualificationAvailable(q) {
   return q.years.some(isYearAvailable);
 }
 
-export function countQuestions(year) {
-  return (year.subjects || []).reduce((n, s) => n + s.questions.length, 0);
-}
-
 // トップページ用の要約。年度は収録済みのものだけを対象にする。
 //   yearText: 連続していれば「最古〜最新」、飛びがあれば全年度を列挙
 //   subjectText: 収録済みの年度に出てくる科目名(重複なし)
-//   count: 収録済みの全問題数
 export function summarize(q) {
   const years = q.years.filter(isYearAvailable);
   if (years.length === 0) return { available: false };
@@ -70,12 +65,10 @@ export function summarize(q) {
   else yearText = sorted.map((y) => y.label).join("・");
 
   const labels = [];
-  let count = 0;
   for (const y of years) {
     for (const s of y.subjects) {
       if (!labels.includes(s.label)) labels.push(s.label);
-      count += s.questions.length;
     }
   }
-  return { available: true, yearText, subjectText: labels.join("・"), count };
+  return { available: true, yearText, subjectText: labels.join("・") };
 }

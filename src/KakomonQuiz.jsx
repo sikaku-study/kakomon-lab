@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PhDiagram from "./PhDiagram.jsx";
 
 const INK = "#26323d";
 const INK_TINT = "#eef1f3";
@@ -433,6 +434,20 @@ function QuizScreen({ title, yearLabel, subjects, onBackToYears }) {
           <div style={{ fontSize: 15, lineHeight: 1.9, whiteSpace: "pre-wrap" }}>
             <QuestionText text={q.question} choices={q.choices} />
           </div>
+          {q.diagram && (
+            <div
+              style={{
+                marginTop: 14,
+                padding: 12,
+                background: "#fff",
+                border: `1.5px solid ${RULE}`,
+                borderRadius: 3,
+                textAlign: "center",
+              }}
+            >
+              <PhDiagram {...q.diagram} />
+            </div>
+          )}
           {q.image && (
             <div
               style={{

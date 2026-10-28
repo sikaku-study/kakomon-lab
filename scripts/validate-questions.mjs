@@ -156,6 +156,13 @@ for (const file of dataFiles) {
           if (!answers.every((a) => Number.isInteger(a) && a >= 0 && a < n)) {
             issue(`${item.id}: answer が選択肢の範囲外 (answer=${JSON.stringify(item.answer)}, 選択肢${n}個)`);
           }
+          if (item.diagram) {
+            for (const k of ["h1", "h2", "h3", "h4", "hA", "hB"]) {
+              if (typeof item.diagram[k] !== "number") {
+                issue(`${item.id}: diagram.${k} が数値でない`);
+              }
+            }
+          }
           if (item.image && !existsSync(path.join(publicDir, item.image))) {
             issue(`${item.id}: 画像が見つからない public${item.image}`);
           }

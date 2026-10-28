@@ -157,10 +157,14 @@ for (const file of dataFiles) {
             issue(`${item.id}: answer が選択肢の範囲外 (answer=${JSON.stringify(item.answer)}, 選択肢${n}個)`);
           }
           if (item.diagram) {
-            for (const k of ["h1", "h2", "h3", "h4", "hA", "hB"]) {
+            for (const k of ["h1", "h2", "h3", "h4"]) {
               if (typeof item.diagram[k] !== "number") {
                 issue(`${item.id}: diagram.${k} が数値でない`);
               }
+            }
+            // hA・hB(飽和線上の点)は、図に無ければ両方とも省略する
+            if ((item.diagram.hA === undefined) !== (item.diagram.hB === undefined)) {
+              issue(`${item.id}: diagram.hA と hB は両方指定するか両方省略する`);
             }
           }
           if (item.image && !existsSync(path.join(publicDir, item.image))) {

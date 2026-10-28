@@ -32,7 +32,11 @@ function smoothPath(pts) {
   return d;
 }
 
-export default function PhDiagram({ h1, h2, h3, h4, hA, hB }) {
+export default function PhDiagram({ h1, h2, h3, h4, hA: hAIn, hB: hBIn }) {
+  // A・B が図に無い問題では、飽和曲線の形のために仮の位置を使い、A・B は描かない
+  const showAB = typeof hAIn === "number" && typeof hBIn === "number";
+  const hA = showAB ? hAIn : h4 - 95;
+  const hB = showAB ? hBIn : h1 - 22;
   const W = 560;
   const H = 350;
   const X0 = 64; // 縦軸
@@ -75,12 +79,11 @@ export default function PhDiagram({ h1, h2, h3, h4, hA, hB }) {
 
   // 横軸の値ラベル。近いものは2段に分けて重ならないようにする
   const ticks = [
-    { x: xA, v: hA },
     { x: x4, v: h4 },
-    { x: xB, v: hB },
     { x: x1, v: h1 },
     { x: x2, v: h2 },
   ];
+  if (showAB) ticks.push({ x: xA, v: hA }, { x: xB, v: hB });
   if (h3 !== h4) ticks.push({ x: x3, v: h3 });
   ticks.sort((a, b) => a.x - b.x);
   let lastX = [-999, -999];
@@ -135,10 +138,15 @@ export default function PhDiagram({ h1, h2, h3, h4, hA, hB }) {
       <path d={dome} fill="none" stroke={GRAY} strokeWidth={1.6} strokeDasharray="5 4" />
 
       {/* 補助線(点から横軸へ) */}
-      {[xA, x4, xB, x1, x2].concat(h3 !== h4 ? [x3] : []).map((x, i) => (
+      {[x4, x1, x2]
+        .concat(showAB ? [xA, xB] : [])
+        .concat(h3 !== h4 ? [x3] : [])
+        .map((x, i) => (
         <line key={i} x1={x} y1={x === x2 ? PC : PE} x2={x} y2={YB} stroke={GRAY} strokeWidth={1} strokeDasharray="3 3" />
       ))}
-      <line x1={xA} y1={PE} x2={x4} y2={PE} stroke={GRAY} strokeWidth={1} strokeDasharray="3 3" />
+      {showAB && (
+        <line x1={xA} y1={PE} x2={x4} y2={PE} stroke={GRAY} strokeWidth={1} strokeDasharray="3 3" />
+      )}
 
       {/* サイクル */}
       <polygon
@@ -156,10 +164,14 @@ export default function PhDiagram({ h1, h2, h3, h4, hA, hB }) {
       <text x={x3 - 20} y={(PE + PC) / 2} {...label}>膨張</text>
 
       {/* 点A・B */}
-      <circle cx={xA} cy={PE} r={3.5} fill={INK} />
-      <circle cx={xB} cy={PE} r={3.5} fill={INK} />
-      <text x={xA - 10} y={PE - 8} fontSize={13} fontWeight={700} fill={INK} textAnchor="middle">A</text>
-      <text x={xB - 7} y={PE - 8} fontSize={13} fontWeight={700} fill={INK} textAnchor="middle">B</text>
+      {showAB && (
+        <g>
+          <circle cx={xA} cy={PE} r={3.5} fill={INK} />
+          <circle cx={xB} cy={PE} r={3.5} fill={INK} />
+          <text x={xA - 10} y={PE - 8} fontSize={13} fontWeight={700} fill={INK} textAnchor="middle">A</text>
+          <text x={xB - 7} y={PE - 8} fontSize={13} fontWeight={700} fill={INK} textAnchor="middle">B</text>
+        </g>
+      )}
 
       {circle(x1, PE, 1)}
       {circle(x2, PC, 2)}

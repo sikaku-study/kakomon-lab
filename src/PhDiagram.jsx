@@ -10,17 +10,24 @@ const INK = "#26323d";
 const BLUE = "#1f5f8b";
 const GRAY = "#8a93a0";
 
-// 点列をなめらかな3次ベジェでつなぐ(最初の点への M は含めない)
-function smoothSegs(pts) {
-  let d = "";
+// 点列を通るなめらかな曲線(各点の接線は前後の点から決め、区間長に合わせて制御点を置く)
+function smoothPath(pts) {
+  const dir = (i) => {
+    const a = pts[Math.max(i - 1, 0)];
+    const b = pts[Math.min(i + 1, pts.length - 1)];
+    const dx = b[0] - a[0];
+    const dy = b[1] - a[1];
+    const n = Math.hypot(dx, dy) || 1;
+    return [dx / n, dy / n];
+  };
+  let d = `M${pts[0][0]},${pts[0][1]}`;
   for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[i - 1] || pts[i];
     const p1 = pts[i];
     const p2 = pts[i + 1];
-    const p3 = pts[i + 2] || p2;
-    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
-    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
-    d += ` C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${p2[0]},${p2[1]}`;
+    const len = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]) / 3;
+    const d1 = dir(i);
+    const d2 = dir(i + 1);
+    d += ` C${p1[0] + d1[0] * len},${p1[1] + d1[1] * len} ${p2[0] - d2[0] * len},${p2[1] - d2[1] * len} ${p2[0]},${p2[1]}`;
   }
   return d;
 }
@@ -46,31 +53,25 @@ export default function PhDiagram({ h1, h2, h3, h4, hA, hB }) {
   const x3 = sx(h3);
   const x4 = sx(h4);
   const yAt = (t) => YB - t * (YB - TOP); // t: 0(横軸)〜1(頂点)
-  const xLc = x3 + 0.15 * (x2 - x3); // 凝縮圧力での飽和液線(3より右)
-  const xVc = x1 + 0.55 * (x2 - x1); // 凝縮圧力での飽和蒸気線(2より左)
-  const xTop = (xLc + xVc) / 2 + 10;
-  const half = 0.3 * (xVc - xLc);
-  const xl9 = xTop - half;
-  const xr9 = xTop + half;
-  const leftPts = [
-    [xA - 24, YB],
+  // 飽和曲線: 左(飽和液線)は A から右上へ大きく広がり、頂点は右寄り、
+  // 右(飽和蒸気線)は B からほぼ垂直に立ち上がる形にする。
+  const xLc = Math.max(x3 + 14, x3 + 0.1 * (x2 - x3)); // 凝縮圧力での飽和液線(3より右)
+  const xVc = x1 + 0.18 * (x2 - x1); // 凝縮圧力での飽和蒸気線(2より左)
+  const xTop = xVc - 0.13 * (xVc - xLc);
+  const dome = smoothPath([
+    [xA - 10, YB],
     [xA, PE],
-    [xA + 0.35 * (xLc - xA), yAt(0.5)],
+    [xA + 0.5 * (xLc - xA), yAt(0.46)],
     [xLc, PC],
-    [xl9, yAt(0.9)],
-  ];
-  const rightPts = [
-    [xr9, yAt(0.9)],
+    [xLc + 0.38 * (xTop - xLc), yAt(0.94)],
+    [xTop, TOP],
+    [xVc + 3, yAt(0.86)],
     [xVc, PC],
-    [xB + 0.5 * (xVc - xB), yAt(0.5)],
+    [xB + 0.89 * (xVc - xB), yAt(0.5)],
+    [xB + 0.46 * (xVc - xB), yAt(0.31)],
     [xB, PE],
-    [xB - 18, YB],
-  ];
-  const dome =
-    `M${leftPts[0][0]},${leftPts[0][1]}` +
-    smoothSegs(leftPts) +
-    ` C${xl9 + half * 0.4},${TOP - 14} ${xr9 - half * 0.4},${TOP - 14} ${xr9},${yAt(0.9)}` +
-    smoothSegs(rightPts);
+    [xB - 12, YB],
+  ]);
 
   // 横軸の値ラベル。近いものは2段に分けて重ならないようにする
   const ticks = [
